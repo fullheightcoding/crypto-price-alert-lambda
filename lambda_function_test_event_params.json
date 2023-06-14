@@ -1,0 +1,17 @@
+[
+  {
+    "threshold_coin": "bitcoin",
+    "threshold_price": 10000,
+    "threshold_direction": "less_than"
+  },
+  {
+    "threshold_coin": "ethereum",
+    "threshold_price": 1000,
+    "threshold_direction": "less_than"
+  },
+  {
+    "threshold_coin": "solana",
+    "threshold_price": 10,
+    "threshold_direction": "less_than"
+  }
+]
