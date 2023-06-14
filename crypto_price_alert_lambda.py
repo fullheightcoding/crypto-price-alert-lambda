@@ -92,3 +92,5 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': 'Threshold coin, threshold price, or threshold direction not provided.'
         }
+
+#test
