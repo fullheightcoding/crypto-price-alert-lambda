@@ -24,6 +24,10 @@ def get_parameter(parameter_name):
         logger.error(f"Failed to retrieve parameter {parameter_name}: {str(e)}")
         raise
 
+#call get_parameter() outside of lambda_handler so it can be reused by lambda context on mult invokes
+# Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
+sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
+
 async def fetch_price(api_url):
     try:
         with urllib.request.urlopen(api_url) as response:
@@ -47,8 +51,8 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         # SNS client
         sns_client = boto3.client('sns')
 
-        # Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
-        sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
+        # # Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
+        # sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
 
         # Log the current price
         logger.info(f"{threshold_coin.capitalize()} current price: {price[threshold_coin]['usd']}")
