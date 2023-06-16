@@ -34,4 +34,5 @@ Steps:
 - Update cron jobs so they use ohio (us east) time to run
 
 Todo:
-- Refactor crypto_price_alert.py so that the init stuff happens outside of lambda_handler() so it is re-used across invokes not every time func is invoked
+- Refactor crypto_price_alert.py so that the init stuff happens outside of lambda_handler() so it is re-used across invokes not every time func is invoked - DONE
+- Update unit tests
