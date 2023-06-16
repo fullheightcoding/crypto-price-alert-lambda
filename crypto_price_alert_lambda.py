@@ -51,9 +51,6 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         # SNS client
         sns_client = boto3.client('sns')
 
-        # # Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
-        # sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
-
         # Log the current price
         logger.info(f"{threshold_coin.capitalize()} current price: {price[threshold_coin]['usd']}")
 
