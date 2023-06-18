@@ -1,5 +1,6 @@
 {
     "bitcoin": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
     "ethereum": "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-    "solana": "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+    "solana": "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
+    "doge": "https://api.coingecko.com/api/v3/simple/price?ids=doge&vs_currencies=usd"    
   }
