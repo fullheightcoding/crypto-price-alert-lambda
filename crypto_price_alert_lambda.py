@@ -4,6 +4,7 @@ import urllib.request
 import json
 import asyncio
 from datetime import date
+from decimal import Decimal
 
 # Set up logging
 logger = logging.getLogger()
@@ -74,7 +75,7 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         item = {
             'CryptoSymbol': threshold_coin,
             'Date': str(date.today()),  # Modify this based on how you want to represent the date
-            'Price': price[threshold_coin]['usd']
+            'Price': Decimal(str(price[threshold_coin]['usd']))  # Convert float to Decimal
         }
         table.put_item(Item=item)
     except Exception as e:
