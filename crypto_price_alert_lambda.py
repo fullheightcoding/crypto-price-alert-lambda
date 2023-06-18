@@ -16,6 +16,16 @@ with open('api_urls.json') as f:
 # Constants for API endpoints
 API_URLS = api_urls_data
 
+def get_parameter(parameter_name):
+    try:
+        ssm_client = boto3.client('ssm')
+        response = ssm_client.get_parameter(Name=parameter_name, WithDecryption=True)
+        return response['Parameter']['Value']
+    except Exception as e:
+        logger.error(f"Failed to retrieve parameter {parameter_name}: {str(e)}")
+        raise
+
+# Call get_parameter() outside of lambda_handler so it can be reused by lambda context on mult invokes
 # Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
 sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
 
@@ -73,5 +83,27 @@ async def main(threshold_coin, threshold_price, threshold_direction):
 
     return 'Price check complete.'
 
-# The lambda_handler function remains the same
-# ...
+def lambda_handler(event, context):
+    threshold_coin = event.get('threshold_coin')
+    threshold_price = event.get('threshold_price')
+    threshold_direction = event.get('threshold_direction')
+
+    if threshold_price and threshold_coin and threshold_direction:
+        try:
+            loop = asyncio.get_event_loop()
+            result = loop.run_until_complete(main(threshold_coin, threshold_price, threshold_direction))
+            return {
+                'statusCode': 200,
+                'body': json.dumps(result)
+            }
+        except Exception as e:
+            logger.error(f"Lambda handler error: {str(e)}")
+            return {
+                'statusCode': 500,
+                'body': 'Internal server error.'
+            }
+    else:
+        return {
+            'statusCode': 400,
+            'body': 'Threshold coin, threshold price, or threshold direction not provided.'
+        }
