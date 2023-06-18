@@ -24,9 +24,14 @@ def get_parameter(parameter_name):
         logger.error(f"Failed to retrieve parameter {parameter_name}: {str(e)}")
         raise
 
-#call get_parameter() outside of lambda_handler so it can be reused by lambda context on mult invokes
+# Call get_parameter() outside of lambda_handler so it can be reused by lambda context on mult invokes
 # Retrieve SNS topic ARN from AWS Systems Manager Parameter Store
 sns_topic_arn = get_parameter('/crypto_price_alert/sns_topic_arn')
+
+# DynamoDB resource
+dynamodb = boto3.resource('dynamodb')
+table_name = 'CryptoPrices'
+table = dynamodb.Table(table_name)
 
 async def fetch_price(api_url):
     try:
@@ -63,6 +68,14 @@ async def main(threshold_coin, threshold_price, threshold_direction):
                 logger.info(f"{threshold_coin.capitalize()} price notification sent.")
             else:
                 logger.warning("SNS topic ARN not available.")
+        
+        # Store the CryptoSymbol, Date, and Price in DynamoDB
+        item = {
+            'CryptoSymbol': threshold_coin,
+            'Date': str(date.today()),  # Modify this based on how you want to represent the date
+            'Price': price[threshold_coin]['usd']
+        }
+        table.put_item(Item=item)
     except Exception as e:
         logger.error(f"Error in main function: {str(e)}")
         raise
