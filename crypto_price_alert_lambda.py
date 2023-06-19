@@ -76,14 +76,16 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         
         # Write the data to DynamoDB
         dynamodb_client = boto3.client('dynamodb')
+        current_date = datetime.now().strftime('%Y-%m-%d')
         item = {
             'CryptoSymbol': {'S': threshold_coin},
-            'Date': {'S': datetime.now().isoformat()},
+            'Date': {'S': current_date},
             'Price': {'N': str(price[threshold_coin]['usd'])}
         }
         response = dynamodb_client.put_item(
             TableName=dynamodb_table_name,
-            Item=item)
+            Item=item
+        )
     except Exception as e:
         logger.error(f"Error in main function: {str(e)}")
         raise
