@@ -17,6 +17,9 @@ with open('api_urls.json') as f:
 # Constants for API endpoints
 API_URLS = api_urls_data
 
+# Specify the DynamoDB table name
+dynamodb_table_name = 'CryptoPrices'
+
 def get_parameter(parameter_name):
     try:
         ssm_client = boto3.client('ssm')
@@ -71,13 +74,16 @@ async def main(threshold_coin, threshold_price, threshold_direction):
             else:
                 logger.warning("SNS topic ARN not available.")
         
-        # Store the CryptoSymbol, Date, and Price in DynamoDB
+        # Write the data to DynamoDB
+        dynamodb_client = boto3.client('dynamodb')
         item = {
-            'CryptoSymbol': threshold_coin,
-            'Date': str(date.today()),  # Modify this based on how you want to represent the date
-            'Price': Decimal(str(price[threshold_coin]['usd']))  # Convert float to Decimal
+            'CryptoSymbol': {'S': threshold_coin},
+            'Date': {'S': datetime.now().isoformat()},
+            'Price': {'N': str(price[threshold_coin]['usd'])}
         }
-        table.put_item(Item=item)
+        response = dynamodb_client.put_item(
+            TableName=dynamodb_table_name,
+            Item=item)
     except Exception as e:
         logger.error(f"Error in main function: {str(e)}")
         raise
