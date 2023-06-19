@@ -13,10 +13,5 @@
     "threshold_coin": "solana",
     "threshold_price": 10,
     "threshold_direction": "less_than"
-  },
-  {
-    "threshold_coin": "dogecoin",
-    "threshold_price": 0.02,
-    "threshold_direction": "less_than"
   }  
 ]
