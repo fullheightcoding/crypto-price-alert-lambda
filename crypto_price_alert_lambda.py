@@ -3,7 +3,7 @@ import boto3
 import urllib.request
 import json
 import asyncio
-from datetime import date
+from datetime import datetime
 from decimal import Decimal
 
 # Set up logging
