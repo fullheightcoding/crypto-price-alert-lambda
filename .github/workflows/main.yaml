@@ -76,7 +76,7 @@ jobs:
 
       - name: Deploy DataAnalysis to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name CryptoPriceAlert-DataAnalysis --zip-file fileb://path/to/DataAnalysis/crypto_price_alert_data_analysis_lambda.zip
+          aws lambda update-function-code --function-name CryptoPriceAlert-DataAnalysis --zip-file fileb://crypto-price-alert-dataanalysis/crypto_price_alert_data_analysis_lambda.zip
 
       - name: Zip source code and api_urls.json (DataCollection)
         run: |
@@ -92,4 +92,4 @@ jobs:
 
       - name: Deploy DataCollection to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name CryptoPriceAlert-DataCollection --zip-file fileb://path/to/DataCollection/crypto_price_alert_data_collection_lambda.zip
+          aws lambda update-function-code --function-name CryptoPriceAlert-DataCollection --zip-file fileb://crypto-price-alert-datacollection/crypto_price_alert_data_collection_lambda.zip
