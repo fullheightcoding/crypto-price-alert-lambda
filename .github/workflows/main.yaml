@@ -62,9 +62,10 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Zip source code and api_urls.json
+      - name: Zip source code and api_urls.json (DataAnalysis)
         run: |
-          zip -r crypto_price_alert_lambda.zip crypto_price_alert_lambda.py api_urls.json
+          cd ./DataAnalysis
+          zip -r crypto_price_alert_data_analysis_lambda.zip CryptoPriceAlert-DataAnalysis.py
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -73,6 +74,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy to AWS Lambda
+      - name: Deploy DataAnalysis to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name CryptoPriceAlert --zip-file fileb://crypto_price_alert_lambda.zip
+          aws lambda update-function-code --function-name CryptoPriceAlert-DataAnalysis --zip-file fileb://path/to/DataAnalysis/crypto_price_alert_data_analysis_lambda.zip
+
+      - name: Zip source code and api_urls.json (DataCollection)
+        run: |
+          cd ./DataCollection
+          zip -r crypto_price_alert_data_collection_lambda.zip CryptoPriceAlert-DataCollection.py api_urls.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy DataCollection to AWS Lambda
+        run: |
+          aws lambda update-function-code --function-name CryptoPriceAlert-DataCollection --zip-file fileb://path/to/DataCollection/crypto_price_alert_data_collection_lambda.zip
