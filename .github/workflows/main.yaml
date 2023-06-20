@@ -64,7 +64,7 @@ jobs:
 
       - name: Zip source code and api_urls.json (DataAnalysis)
         run: |
-          cd ./crypto-price-alert-dataanalysis
+          cd crypto-price-alert-dataanalysis
           zip -r crypto_price_alert_data_analysis_lambda.zip CryptoPriceAlert-DataAnalysis.py
 
       - name: Configure AWS credentials
@@ -80,7 +80,7 @@ jobs:
 
       - name: Zip source code and api_urls.json (DataCollection)
         run: |
-          cd ./crypto-price-alert-datacollection
+          cd crypto-price-alert-datacollection
           zip -r crypto_price_alert_data_collection_lambda.zip CryptoPriceAlert-DataCollection.py api_urls.json
 
       - name: Configure AWS credentials
