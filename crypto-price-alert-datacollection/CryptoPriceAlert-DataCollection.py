@@ -3,7 +3,7 @@ import boto3
 import urllib.request
 import json
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 # Set up logging
@@ -77,12 +77,21 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         # Write the data to DynamoDB
         dynamodb_client = boto3.client('dynamodb')
         current_date = datetime.now().strftime('%Y-%m-%d')
-        timestamp = str(int(datetime.now().timestamp()))
+        #timestamp = str(int(datetime.now().timestamp()))
+
+        # Calculate the TTL duration in seconds (30 days = 30 * 24 * 60 * 60 seconds)
+        ttl_duration = 30 * 24 * 60 * 60
+        # Calculate the expiration time
+        current_time = datetime.utcnow()
+        expiration_time = current_time + timedelta(seconds=ttl_duration)
+        # Convert expiration time to UNIX timestamp
+        expiration_timestamp = int(expiration_time.timestamp())
+
         item = {
             'CryptoSymbol': {'S': threshold_coin},
             'Date': {'S': current_date},
             'Price': {'N': str(price[threshold_coin]['usd'])},
-            'DateTTL': {'S': timestamp}
+            'DateTTL': {'S': expiration_timestamp}
         }
 
         response = dynamodb_client.put_item(
