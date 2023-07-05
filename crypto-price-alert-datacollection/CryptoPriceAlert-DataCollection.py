@@ -77,10 +77,12 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         # Write the data to DynamoDB
         dynamodb_client = boto3.client('dynamodb')
         current_date = datetime.now().strftime('%Y-%m-%d')
+        timestamp = int(datetime.now().timestamp())
         item = {
             'CryptoSymbol': {'S': threshold_coin},
             'Date': {'S': current_date},
-            'Price': {'N': str(price[threshold_coin]['usd'])}
+            'Price': {'N': str(price[threshold_coin]['usd'])},
+            'DateTTL': {'S': timestamp}
         }
 
         response = dynamodb_client.put_item(
