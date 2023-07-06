@@ -85,7 +85,7 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         current_time = datetime.utcnow()
         expiration_time = current_time + timedelta(seconds=ttl_duration)
         # Convert expiration time to UNIX timestamp
-        expiration_timestamp = int(expiration_time.timestamp())
+        expiration_timestamp = str(int(expiration_time.timestamp()))
 
         item = {
             'CryptoSymbol': {'S': threshold_coin},
