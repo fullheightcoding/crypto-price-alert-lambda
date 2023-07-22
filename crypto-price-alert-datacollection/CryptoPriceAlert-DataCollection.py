@@ -47,7 +47,7 @@ async def fetch_price(api_url):
         logger.error(f"Failed to fetch price from API: {str(e)}")
         raise
 
-async def main(threshold_coin, threshold_price, threshold_direction):
+async def main(threshold_coin, threshold_price, threshold_direction, threshold_denomination):
     api_url = API_URLS.get(threshold_coin)
     if api_url is None:
         logger.error('Invalid threshold coin.')
@@ -65,15 +65,23 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         logger.info(f"{threshold_coin.capitalize()} current price: {price[threshold_coin]['usd']}")
 
         # Check if the price meets the threshold condition and send an email notification
-        if (threshold_direction == 'less_than' and price[threshold_coin]['usd'] < threshold_price) or \
-           (threshold_direction == 'greater_than' and price[threshold_coin]['usd'] > threshold_price):
+        # if (threshold_direction == 'less_than' and price[threshold_coin]['usd'] < threshold_price) or \
+        #    (threshold_direction == 'greater_than' and price[threshold_coin]['usd'] > threshold_price):
+        #     if sns_topic_arn:
+        #         message = f"{threshold_coin.capitalize()} price has {threshold_direction} {threshold_price} USD. Current price: {price[threshold_coin]['usd']} USD."
+        #         sns_client.publish(TopicArn=sns_topic_arn, Message=message)
+        #         logger.info(f"{threshold_coin.capitalize()} price notification sent.")
+        #     else:
+        #         logger.warning("SNS topic ARN not available.")
+        if (threshold_direction == 'less_than' and price[threshold_coin][threshold_denomination] < threshold_price) or \
+           (threshold_direction == 'greater_than' and price[threshold_coin][threshold_denomination] > threshold_price):
             if sns_topic_arn:
-                message = f"{threshold_coin.capitalize()} price has {threshold_direction} {threshold_price} USD. Current price: {price[threshold_coin]['usd']} USD."
+                message = f"{threshold_coin.capitalize()} price has {threshold_direction} {threshold_price} {threshold_denomination}. Current price: {price[threshold_coin][threshold_denomination]} {threshold_denomination}."
                 sns_client.publish(TopicArn=sns_topic_arn, Message=message)
                 logger.info(f"{threshold_coin.capitalize()} price notification sent.")
             else:
                 logger.warning("SNS topic ARN not available.")
-        
+
         # Write the data to DynamoDB
         dynamodb_client = boto3.client('dynamodb')
         current_date = datetime.now().strftime('%Y-%m-%d')
@@ -87,10 +95,18 @@ async def main(threshold_coin, threshold_price, threshold_direction):
         # Convert expiration time to UNIX timestamp
         expiration_timestamp = str(int(expiration_time.timestamp()))
 
+        actual_price_in_denominated_value = 0
+        if price[threshold_coin][threshold_coin] == 'usd':
+            actual_price_in_denominated_value = str(price[threshold_coin]['usd'])
+        elif price[threshold_coin][threshold_coin] == 'btc':
+            actual_price_in_denominated_value = str(price[threshold_coin]['btc'])
+
         item = {
             'CryptoSymbol': {'S': threshold_coin},
             'Date': {'S': current_date},
-            'Price': {'N': str(price[threshold_coin]['usd'])},
+            # 'Price': {'N': str(price[threshold_coin]['usd'])},
+            'Price': {'N': actual_price_in_denominated_value},
+            'Denomination': {'S': price[threshold_denomination][threshold_denomination]},
             'DateTTL': {'S': expiration_timestamp}
         }
 
@@ -108,11 +124,12 @@ def lambda_handler(event, context):
     threshold_coin = event.get('threshold_coin')
     threshold_price = event.get('threshold_price')
     threshold_direction = event.get('threshold_direction')
+    threshold_denomination = event.get('threshold_denomination')
 
     if threshold_price and threshold_coin and threshold_direction:
         try:
             loop = asyncio.get_event_loop()
-            result = loop.run_until_complete(main(threshold_coin, threshold_price, threshold_direction))
+            result = loop.run_until_complete(main(threshold_coin, threshold_price, threshold_direction, threshold_denomination))
             return {
                 'statusCode': 200,
                 'body': json.dumps(result)

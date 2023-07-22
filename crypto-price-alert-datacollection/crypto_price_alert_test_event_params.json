@@ -1,17 +1,38 @@
 [
   {
     "threshold_coin": "bitcoin",
-    "threshold_price": 10000,
-    "threshold_direction": "less_than"
+    "threshold_price": 30000,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "usd"
   },
   {
     "threshold_coin": "ethereum",
-    "threshold_price": 1000,
-    "threshold_direction": "less_than"
+    "threshold_price": 1500,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "usd"
   },
   {
     "threshold_coin": "solana",
-    "threshold_price": 10,
-    "threshold_direction": "less_than"
+    "threshold_price": 25,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "usd"
+  },
+  {
+    "threshold_coin": "bitcoin",
+    "threshold_price": 1,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "btc"
+  },
+  {
+    "threshold_coin": "ethereum",
+    "threshold_price": 0.05,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "btc"
+  },
+  {
+    "threshold_coin": "solana",
+    "threshold_price": 0.0003,
+    "threshold_direction": "less_than",
+    "threshold_denomination": "btc"
   }  
 ]
